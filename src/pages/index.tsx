@@ -1,8 +1,10 @@
+import { useSession } from "next-auth/react"
 
 export default function Home() {
+  const { data } = useSession()
   return (
     <>
-      <h1>Book wise</h1>
+      <h1>{data?.user.name}</h1>
     </>
   )
 }
