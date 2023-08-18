@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.0.10",
     "@prisma/client": "^5.1.1",
     "@stitches/react": "^1.2.8",
     "@types/node": "20.4.6",
