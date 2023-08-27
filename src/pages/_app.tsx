@@ -1,4 +1,6 @@
+import { queryClient } from '@/lib/react-query'
 import { globalStyles } from '@/styles/global'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { NextPage } from 'next'
 import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
@@ -21,11 +23,13 @@ globalStyles()
 export default function App({ Component, pageProps: {session, ...pageProps} }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page)
   return (
-    <SessionProvider session={session}>
-      <div className={nunito.className}>
-        {getLayout(<Component {...pageProps} />)}
-      </div>
-    </SessionProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider session={session}>
+        <div className={nunito.className}>
+          {getLayout(<Component {...pageProps} />)}
+        </div>
+      </SessionProvider>
+    </QueryClientProvider>
     )
 
 }
