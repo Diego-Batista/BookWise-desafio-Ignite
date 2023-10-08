@@ -1,6 +1,6 @@
 import { api } from "@/lib/axios"
 import { Check, X } from "@phosphor-icons/react"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useSession } from "next-auth/react"
 import { FormEvent, useState } from "react"
 import { RatingStars } from "../RatingStars"
@@ -21,11 +21,19 @@ export const RatingForm = ({  onCancel, bookId }: RatingFormProps) => {
 
     const { data: session } = useSession()
 
+    const queryClient = useQueryClient()
+
     const { mutateAsync: handleRate } = useMutation(async () => {
         await api.post(`books/${bookId}/rate`, {
             description,
             rate: currentRate
         })
+    }, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(["book", bookId])
+            queryClient.invalidateQueries(["books"])
+            onCancel()
+        }
     })
 
     const user = session?.user
