@@ -4,7 +4,8 @@ import { BookOpen, BookmarkSimple, X } from '@phosphor-icons/react';
 import { CategoriesOnBooks, Category } from '@prisma/client';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useQuery } from '@tanstack/react-query';
-import { ReactNode, useState } from "react";
+import { useRouter } from 'next/router';
+import { ReactNode, useEffect, useState } from "react";
 import { BookWithAvgRating } from '../BookCard';
 import { BookRatings } from '../BookRatings';
 import { RatingStars } from '../RatingStars';
@@ -34,12 +35,30 @@ export const RatingsDialog = ({ bookId, children }: RatingsDialogProps) => {
         enabled: open
     })
 
+    const router = useRouter()
+    const paramBook = router.query.book as string
+
+    useEffect(() => {
+        if(paramBook === bookId) {
+            setOpen(true)
+        }
+    }, [bookId, paramBook])
+
     const ratingLength = book?.ratings?.length ?? 0
 
     const categories = book?.categories?.map(x => x.category.name)?.join(', ') ?? ""
 
+    const onOpenChange = (open: boolean) => {
+        if(open) {
+            router.push(`/explore?book=${bookId}`, undefined, { shallow: true})
+        } else {
+            router.push('/explore', undefined, { shallow: true})
+        }
+        setOpen(open)
+    }
+
     return (
-        <Dialog.Root open={open} onOpenChange={setOpen}>
+        <Dialog.Root open={open} onOpenChange={onOpenChange}>
             <Dialog.Trigger asChild>
                 {children}
             </Dialog.Trigger>
